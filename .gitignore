@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+data/*.db
+data/*.db-*
+data/*.log
+.env
+.pytest_cache/
+ZZZ_AI_Monitor_Project_For_Prompt_AI.md

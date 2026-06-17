@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>游戏发行运营 AI Agent 舆情中台 V2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar p-5">
+        <div class="mb-8">
+          <div class="text-xs text-[#e94560] font-bold tracking-normal">GAME OPS AI</div>
+          <h1 class="mt-2 text-xl font-black leading-tight">AI Agent 舆情中台</h1>
+          <p class="mt-2 text-sm text-slate-400">发行运营专业工作台 V2.0</p>
+        </div>
+
+        <nav class="space-y-2">
+          <a class="nav-item active" href="#version-board"><i data-lucide="activity"></i><span>版本舆情</span></a>
+          <a class="nav-item" href="#agent-board"><i data-lucide="bot"></i><span>Agent 中台</span></a>
+          <a class="nav-item" href="#nlp-board"><i data-lucide="network"></i><span>NLP 洞察</span></a>
+          <a class="nav-item" href="#overview-board"><i data-lucide="bar-chart-3"></i><span>数据概览</span></a>
+          <a class="nav-item" href="#comments-board"><i data-lucide="messages-square"></i><span>评论列表</span></a>
+          <a class="nav-item" href="#enterprise-board"><i data-lucide="shield-check"></i><span>企业监控</span></a>
+          <a class="nav-item" href="#varsapura-board"><i data-lucide="globe-2"></i><span>Varsapura</span></a>
+          <a class="nav-item" href="#report-board"><i data-lucide="file-text"></i><span>日报生成</span></a>
+        </nav>
+
+        <div class="mt-10 panel p-4">
+          <div class="text-sm text-slate-300">三级预警</div>
+          <div class="mt-3 space-y-2 text-sm">
+            <div class="flex items-center justify-between"><span class="badge badge-green">Level 0</span><span class="text-slate-400">正常</span></div>
+            <div class="flex items-center justify-between"><span class="badge badge-yellow">Level 1</span><span class="text-slate-400">关注</span></div>
+            <div class="flex items-center justify-between"><span class="badge badge-red">Level 2</span><span class="text-slate-400">高危</span></div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="min-w-0">
+        <header class="sticky top-0 z-10 border-b border-white/10 bg-[#1a1a2e]/95 backdrop-blur">
+          <div class="flex flex-wrap items-center gap-3 px-5 py-4">
+            <select id="versionSelect" class="field px-3 w-44" aria-label="版本选择"></select>
+            <select id="rangeSelect" class="field px-3 w-36" aria-label="时间范围">
+              <option value="all">全部时间</option>
+              <option value="day">今天</option>
+              <option value="week">近7天</option>
+              <option value="month">近30天</option>
+            </select>
+            <select id="platformSelect" class="field px-3 w-36" aria-label="平台筛选"></select>
+            <select id="categorySelect" class="field px-3 w-40" aria-label="分类筛选"></select>
+            <div class="ml-auto flex items-center gap-2">
+              <button id="collectButton" class="ghost-button" title="立即拉取第一梯队 API 数据">
+                <i data-lucide="radio"></i><span>采集</span>
+              </button>
+              <button id="agentRunButton" class="ghost-button" title="运行四Agent链路">
+                <i data-lucide="bot"></i><span>Agent</span>
+              </button>
+              <button id="exportButton" class="ghost-button" title="导出今日舆情日报 Markdown">
+                <i data-lucide="download"></i><span>导出</span>
+              </button>
+              <button id="refreshButton" class="icon-button" title="刷新看板">
+                <i data-lucide="refresh-cw"></i>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div class="space-y-5 p-5">
+          <section id="agent-board" class="space-y-5">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4" id="agentCards"></div>
+            <div class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+              <div class="panel p-5">
+                <h2 class="text-lg font-bold">Agent 消息总线</h2>
+                <div class="table-wrap mt-4">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>时间</th>
+                        <th>来源</th>
+                        <th>目标</th>
+                        <th>类型</th>
+                        <th>状态</th>
+                      </tr>
+                    </thead>
+                    <tbody id="agentMessageRows"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="panel p-5">
+                <h2 class="text-lg font-bold">语义分布</h2>
+                <div class="chart-box mt-4">
+                  <canvas id="emotionChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="nlp-board" class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+            <div class="panel p-5">
+              <h2 class="text-lg font-bold">语义相似度聚类</h2>
+              <div id="clusterList" class="mt-4 space-y-3"></div>
+            </div>
+            <div class="panel p-5">
+              <h2 class="text-lg font-bold">TF-IDF 热词与新词</h2>
+              <div id="keywordCloud" class="mt-4 flex flex-wrap gap-2"></div>
+              <div class="mt-5 text-sm font-semibold text-slate-300">新词发现</div>
+              <div id="newTerms" class="mt-3 flex flex-wrap gap-2"></div>
+            </div>
+          </section>
+
+          <section id="version-board" class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div class="panel p-5">
+              <div class="flex flex-wrap items-center gap-3">
+                <div>
+                  <h2 class="text-lg font-bold">版本舆情生命周期曲线</h2>
+                  <p class="text-sm text-slate-400">按版本发布后的第 N 天对齐，横向比较口碑走势</p>
+                </div>
+                <div id="compareChecks" class="ml-auto flex flex-wrap gap-2"></div>
+              </div>
+              <div class="chart-box mt-4">
+                <canvas id="lifecycleChart"></canvas>
+              </div>
+            </div>
+
+            <div class="panel p-5">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h2 id="currentVersionName" class="text-lg font-bold">当前版本</h2>
+                  <p id="currentVersionDate" class="text-sm text-slate-400"></p>
+                </div>
+                <span id="earlyFeedbackBadge" class="badge badge-cyan"></span>
+              </div>
+              <dl class="mt-5 grid grid-cols-2 gap-3">
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">发布天数</dt>
+                  <dd id="versionDays" class="mt-2 text-3xl font-black"></dd>
+                </div>
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">累计评论</dt>
+                  <dd id="versionComments" class="mt-2 text-3xl font-black"></dd>
+                </div>
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">平均情绪</dt>
+                  <dd id="versionSentiment" class="mt-2 text-3xl font-black text-[#41d3a2]"></dd>
+                </div>
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">好评率</dt>
+                  <dd id="versionPositive" class="mt-2 text-3xl font-black text-[#f6c85f]"></dd>
+                </div>
+              </dl>
+              <div class="mt-5">
+                <div class="text-sm font-semibold text-slate-300">TOP 问题</div>
+                <ul id="topIssues" class="mt-3 space-y-2 text-sm text-slate-300"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="overview-board" class="space-y-5">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <article class="metric-card p-4">
+                <div class="flex items-center justify-between text-slate-400"><span>新增/筛选评论</span><i data-lucide="message-circle"></i></div>
+                <div id="totalComments" class="mt-3 text-3xl font-black"></div>
+              </article>
+              <article class="metric-card p-4">
+                <div class="flex items-center justify-between text-slate-400"><span>平均情绪分</span><i data-lucide="gauge"></i></div>
+                <div id="avgSentiment" class="mt-3 text-3xl font-black text-[#41d3a2]"></div>
+              </article>
+              <article class="metric-card p-4">
+                <div class="flex items-center justify-between text-slate-400"><span>负面内容</span><i data-lucide="triangle-alert"></i></div>
+                <div id="negativeCount" class="mt-3 text-3xl font-black text-[#f6c85f]"></div>
+              </article>
+              <article class="metric-card p-4">
+                <div class="flex items-center justify-between text-slate-400"><span>高危预警</span><i data-lucide="siren"></i></div>
+                <div id="highWarningCount" class="mt-3 text-3xl font-black text-[#e94560]"></div>
+              </article>
+            </div>
+
+            <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+              <div class="panel p-5">
+                <h2 class="text-lg font-bold">日历情绪趋势</h2>
+                <div class="chart-box mt-4">
+                  <canvas id="sentimentChart"></canvas>
+                </div>
+              </div>
+              <div class="panel p-5">
+                <h2 class="text-lg font-bold">平台分布</h2>
+                <div class="chart-box mt-4">
+                  <canvas id="platformChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel p-5">
+              <h2 class="text-lg font-bold">版本横向对比</h2>
+              <div class="table-wrap mt-4">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>版本</th>
+                      <th>阶段</th>
+                      <th>发布天数</th>
+                      <th>剩余天数</th>
+                      <th>总评论</th>
+                      <th>峰值</th>
+                      <th>首日情绪</th>
+                      <th>第7天情绪</th>
+                      <th>趋势</th>
+                      <th>BUG占比</th>
+                      <th>吐槽占比</th>
+                      <th>好评率</th>
+                    </tr>
+                  </thead>
+                  <tbody id="comparisonRows"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section id="enterprise-board" class="grid grid-cols-1 gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+            <div class="panel p-5">
+              <h2 class="text-lg font-bold">实时风险防控</h2>
+              <div class="table-wrap mt-4">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>级别</th>
+                      <th>标题</th>
+                      <th>原因</th>
+                      <th>推送</th>
+                    </tr>
+                  </thead>
+                  <tbody id="alertRows"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="panel p-5">
+              <h2 class="text-lg font-bold">系统健康</h2>
+              <dl class="mt-4 grid grid-cols-2 gap-3">
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">健康状态</dt>
+                  <dd id="systemHealth" class="mt-2 text-2xl font-black"></dd>
+                </div>
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">开放告警</dt>
+                  <dd id="openAlerts" class="mt-2 text-2xl font-black text-[#e94560]"></dd>
+                </div>
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">重复率</dt>
+                  <dd id="duplicateRate" class="mt-2 text-2xl font-black"></dd>
+                </div>
+                <div class="metric-card p-4">
+                  <dt class="text-sm text-slate-400">空值率</dt>
+                  <dd id="emptyRate" class="mt-2 text-2xl font-black"></dd>
+                </div>
+              </dl>
+              <div class="mt-5 text-sm font-semibold text-slate-300">自动工单</div>
+              <div id="workOrders" class="mt-3 space-y-2"></div>
+            </div>
+          </section>
+
+          <section id="varsapura-board" class="panel p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-bold">Varsapura 全球发行专项</h2>
+                <p class="text-sm text-slate-400">开放世界、全球地区、本地化、AI工作流</p>
+              </div>
+              <span class="badge badge-cyan">配置驱动</span>
+            </div>
+            <div class="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-3">
+              <div>
+                <div class="text-sm font-semibold text-slate-300">专项维度</div>
+                <div id="varsapuraDimensions" class="mt-3 flex flex-wrap gap-2"></div>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-slate-300">地区看板</div>
+                <div id="varsapuraRegions" class="mt-3 flex flex-wrap gap-2"></div>
+              </div>
+              <div>
+                <div class="text-sm font-semibold text-slate-300">AI 工作流</div>
+                <ul id="varsapuraWorkflows" class="mt-3 space-y-2 text-sm text-slate-300"></ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="comments-board" class="panel p-5">
+            <div class="flex flex-wrap items-center gap-3">
+              <div>
+                <h2 class="text-lg font-bold">评论列表</h2>
+                <p class="text-sm text-slate-400">支持平台、分类、版本、时间和关键词过滤</p>
+              </div>
+              <div class="ml-auto flex items-center gap-2">
+                <input id="searchInput" class="field w-72 px-3" placeholder="搜索标题、正文、作者" />
+                <button id="searchButton" class="icon-button" title="搜索"><i data-lucide="search"></i></button>
+              </div>
+            </div>
+            <div class="table-wrap mt-4">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>平台</th>
+                    <th>版本</th>
+                    <th>分类</th>
+                    <th>情绪</th>
+                    <th>预警</th>
+                    <th>内容</th>
+                    <th>互动</th>
+                  </tr>
+                </thead>
+                <tbody id="postRows"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="report-board" class="panel p-5">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-bold">舆情日报</h2>
+                <p class="text-sm text-slate-400">自动汇总今日概览、版本跟踪、热点、预警与运营建议</p>
+              </div>
+              <button id="copyReportButton" class="ghost-button" title="复制日报内容">
+                <i data-lucide="copy"></i><span>复制</span>
+              </button>
+            </div>
+            <pre id="dailyReport" class="report-box mt-4 rounded-md bg-[#0d1730] p-4 text-sm text-slate-200"></pre>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
