@@ -382,6 +382,11 @@ def init_v2_tables(conn: sqlite3.Connection) -> None:
             for game_id, game in GAMES.items()
         ],
     )
+    game_placeholders = ",".join("?" for _ in GAMES)
+    conn.execute(
+        f"DELETE FROM games WHERE id NOT IN ({game_placeholders})",
+        list(GAMES.keys()),
+    )
     conn.executemany(
         """
         INSERT INTO agent_states(agent_id, agent_type, status, enabled, config_json)

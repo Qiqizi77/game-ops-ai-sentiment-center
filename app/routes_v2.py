@@ -150,30 +150,6 @@ async def games(_: Gateway) -> dict[str, object]:
     return GAMES
 
 
-@router.get("/varsapura")
-async def varsapura(_: Gateway) -> dict[str, object]:
-    game = GAMES["varsapura"]
-    return {
-        "game": game,
-        "special_dimensions": game["domain_dimensions"],
-        "global_launch": {
-            "languages": ["简中", "繁中", "英", "日", "韩"],
-            "regions": game["regions"],
-            "culture_analysis": [
-                "中国区偏重性能、抽卡、活动福利",
-                "北美/欧洲偏重开放世界自由度、联机稳定性、本地化表达",
-                "日本/韩国偏重角色塑造、移动端表现、长线养成节奏",
-            ],
-        },
-        "ai_workflows": [
-            "严重BUG自动创建JIRA/飞书任务",
-            "基于FAQ库生成标准回复草稿",
-            "AI建议官方回应措辞",
-            "回应后玩家情绪变化追踪",
-        ],
-    }
-
-
 @router.get("/monitoring")
 async def monitoring(_: Gateway) -> dict[str, object]:
     dashboard = agent_dashboard()

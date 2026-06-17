@@ -10,7 +10,7 @@
 
 这是目前全网数据最完整、最严谨的绝区零社区舆情分析系统。
 
-本项目从【绝区零 游戏社区舆情AI监控系统 V1.0】升级为企业级【游戏发行运营 AI Agent 舆情中台 V2.0】。V1.0 的版本舆情看板、评论筛选、日报导出、米游社/B站/Reddit采集器全部保留；V2.0 新增四 Agent 协作、SQLite 消息总线、专业 NLP、企业监控、多游戏配置和 Varsapura 全球发行专项能力。
+本项目从【绝区零 游戏社区舆情AI监控系统 V1.0】升级为企业级【游戏发行运营 AI Agent 舆情中台 V2.0】。V1.0 的版本舆情看板、评论筛选、日报导出、米游社/B站/Reddit采集器全部保留；V2.0 新增四 Agent 协作、SQLite 消息总线、专业 NLP、企业监控和多游戏配置能力。
 
 ## 功能总览
 
@@ -18,8 +18,7 @@
 - 四 Agent：Collector、Analyzer、Alert、Reporter 独立状态、运行记录、消息通信。
 - NLP：TF-IDF 关键词、余弦相似度、DBSCAN 风格聚类、3σ异常检测、版本口碑预测。
 - 企业能力：API 网关、API Key 开关、限流、角色配置、审计日志、系统健康与数据质量监控。
-- 多游戏：配置化支持绝区零与 Varsapura；新增游戏优先改 `app/config.py`。
-- Varsapura：开放世界性能、联机、AI NPC、昼夜天气、多语言、多地区、本地化和 AI 工作流。
+- 多游戏：配置化支持绝区零；新增游戏优先改 `app/config.py`。
 
 ## 技术栈
 
@@ -71,7 +70,6 @@ V2:
 - `GET /api/v2/alerts`
 - `GET /api/v2/work-orders`
 - `GET /api/v2/monitoring`
-- `GET /api/v2/varsapura`
 - `GET /api/v2/audit`
 
 ## 文档

@@ -25,7 +25,6 @@
 ## Multi-game
 
 - `GET /api/v2/games`：多游戏配置。
-- `GET /api/v2/varsapura`：Varsapura 专项配置与工作流。
 
 ## 鉴权与审计
 

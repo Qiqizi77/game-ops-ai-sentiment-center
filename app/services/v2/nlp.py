@@ -44,32 +44,9 @@ STOPWORDS = {
 ENTITY_PATTERNS = {
     "角色名": ["耀嘉音", "简", "伊芙琳", "月城柳", "安东", "莱卡恩", "妮可", "安比", "比利"],
     "关卡名": ["深渊", "零号空洞", "活动关卡", "支线任务", "训练场", "新地图"],
-    "系统名": ["抽卡", "驱动盘", "UI", "联机", "匹配", "天气", "昼夜", "AI NPC", "本地化"],
+    "系统名": ["抽卡", "驱动盘", "UI", "匹配"],
     "BUG类型": ["闪退", "卡顿", "掉帧", "黑屏", "断线", "穿模", "加载", "贴图", "空气墙", "发热"],
 }
-
-VARSAPURA_TERMS = [
-    "世界探索",
-    "加载",
-    "贴图",
-    "穿模",
-    "掉落",
-    "空气墙",
-    "帧率",
-    "发热",
-    "内存",
-    "闪退位置",
-    "匹配",
-    "掉线",
-    "同步",
-    "延迟",
-    "AI NPC",
-    "昼夜",
-    "天气",
-    "翻译",
-    "本地化",
-]
-
 
 def enrich_post_semantics(post: dict[str, Any]) -> dict[str, Any]:
     text = f"{post.get('title', '')} {post.get('content', '')}"
@@ -130,9 +107,6 @@ def extract_entities(text: str) -> dict[str, list[str]]:
         hits = [term for term in terms if term.lower() in text.lower()]
         if hits:
             entities[label] = hits
-    varsapura_hits = [term for term in VARSAPURA_TERMS if term.lower() in text.lower()]
-    if varsapura_hits:
-        entities["Varsapura专项"] = varsapura_hits
     return entities
 
 

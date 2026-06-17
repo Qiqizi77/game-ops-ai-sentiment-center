@@ -124,32 +124,6 @@ GAMES = {
         "platforms": PLATFORM_NAMES,
         "domain_dimensions": ["抽卡", "角色", "剧情", "战斗", "活动", "性能", "社区情绪"],
     },
-    "varsapura": {
-        "id": "varsapura",
-        "name": "Varsapura",
-        "developer": "Varsapura Studio",
-        "active": False,
-        "default_locale": "zh-CN",
-        "regions": ["中国", "新加坡", "北美", "欧洲", "日本", "韩国"],
-        "versions": [
-            {"version": "0.3", "name": "雨之城技术测试", "release_date": "2026-05-20"},
-            {"version": "0.2", "name": "开放世界联机测试", "release_date": "2026-03-15"},
-            {"version": "0.1", "name": "UE5首测", "release_date": "2026-01-08"},
-        ],
-        "platforms": PLATFORM_NAMES,
-        "domain_dimensions": [
-            "世界探索",
-            "加载贴图",
-            "穿模掉落",
-            "空气墙",
-            "移动端帧率",
-            "发热内存",
-            "联机匹配",
-            "AI NPC",
-            "昼夜天气",
-            "本地化",
-        ],
-    },
 }
 
 API_GATEWAY = {

@@ -65,7 +65,6 @@ async function refreshAll() {
     loadV2AgentCenter(),
     loadV2Nlp(),
     loadV2Enterprise(),
-    loadVarsapura(),
     loadOverview(),
     loadVersion(),
     loadComparison(),
@@ -273,13 +272,6 @@ async function loadV2Enterprise() {
       <div class="mt-1 text-slate-400">${escapeHTML(order.title)}</div>
     </div>
   `).join("") || '<div class="text-sm text-slate-400">暂无工单</div>';
-}
-
-async function loadVarsapura() {
-  const data = await getJSON("/api/v2/varsapura");
-  $("varsapuraDimensions").innerHTML = data.special_dimensions.map((item) => `<span class="badge badge-cyan">${escapeHTML(item)}</span>`).join("");
-  $("varsapuraRegions").innerHTML = data.global_launch.regions.map((item) => `<span class="badge badge-yellow">${escapeHTML(item)}</span>`).join("");
-  $("varsapuraWorkflows").innerHTML = data.ai_workflows.map((item) => `<li class="rounded-md bg-[#0d1730] px-3 py-2">${escapeHTML(item)}</li>`).join("");
 }
 
 function renderCompareChecks() {
